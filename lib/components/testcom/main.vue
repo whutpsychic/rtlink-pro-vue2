@@ -8,7 +8,7 @@
 <script>
 export default {
   mounted() {
-    console.log("page mounted fn done.")
+    console.log("page mounted fn done.0.0.5")
   }
 }
 </script>
