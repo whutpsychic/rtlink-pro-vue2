@@ -1,0 +1,12 @@
+# vue2 project
+node_modules
+public
+src
+
+.eslintrc.cjs
+.gitignore
+index.html
+vite.config.js
+
+# editor
+.vscode

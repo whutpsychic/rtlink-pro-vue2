@@ -1,0 +1,46 @@
+{
+  "name": "rtlink-pro-vue2",
+  "version": "0.0.2",
+  "description": "本项目是适用于 vue2 框架的前端开源项目，瑞太智联自用的UI组件库。\r 要求 vue2 版本 >= 2.5.17。\r 本项目UI部分依赖于 elementUI。",
+  "main": "./lib/main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --port 4173",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
+  },
+  "peerDependencies": {
+    "vue": ">=2.5.17"
+  },
+  "dependencies": {
+    "element-ui": "^2.15.14"
+  },
+  "devDependencies": {
+    "@rushstack/eslint-patch": "^1.1.0",
+    "@vitejs/plugin-legacy": "^2.0.0",
+    "@vitejs/plugin-vue2": "^1.1.2",
+    "@vue/eslint-config-prettier": "^7.0.0",
+    "eslint": "^8.5.0",
+    "eslint-plugin-vue": "^9.0.0",
+    "prettier": "^2.5.1",
+    "terser": "^5.14.2",
+    "vite": "^3.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/whutpsychic/rtlink-pro-vue2.git"
+  },
+  "keywords": [
+    "rtlink",
+    "rtlink-ui",
+    "rtlink-pro",
+    "rtlink-ui-plus",
+    "element-ui"
+  ],
+  "author": "zbc",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/whutpsychic/rtlink-pro-vue2/issues"
+  },
+  "homepage": "https://github.com/whutpsychic/rtlink-pro-vue2#readme"
+}
