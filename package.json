@@ -1,6 +1,6 @@
 {
   "name": "rtlink-pro-vue2",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "本项目是适用于 vue2 框架的前端开源项目，瑞太智联自用的UI组件库。\r 要求 vue2 版本 >= 2.5.17。\r 本项目UI部分依赖于 elementUI。",
   "main": "./lib/main.js",
   "scripts": {
