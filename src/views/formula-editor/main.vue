@@ -19,12 +19,13 @@
         有值时则显示其内容作为错误信息；否则按照默认的内置规则显示公式的错误信息。如果给 errmsg 赋了 false，则无论如何也不会显示错误信息。</li>
       <li>适配瑞太的业务逻辑，公式变量可能存在常数偏移量，使用 varOffset 控制是否开启之。</li>
       <li>开启偏移量校正后，组件会自动读取值分隔符后面的字符，并将之转为数字作为偏移量值;如果初始值里面没有偏移量，那么组件会将之自动校正至0。</li>
+      <li>预留了变量值修饰符接口，你可以按照自己的喜好定义之。</li>
     </ul>
     <h2>基础用法</h2>
     <demo-block height="400">
       <template #main>
         <rt-formula-editor ref="fe" v-model="formula" :varOptions="varOptions" filterable :extraSymbols="extraSymbols"
-          ></rt-formula-editor>
+          varOffset varDecoration="[]" :errmsg="'错误信息'"></rt-formula-editor>
         <el-button @click="look">查看值</el-button>
       </template>
       <template #codes>
@@ -165,6 +166,13 @@ export default {
           type: 'string',
           options: ' — ',
           default: ' | '
+        },
+        {
+          arg: 'varDecoration',
+          des: '变量修饰符',
+          type: 'string',
+          options: ' — ',
+          default: ' — '
         }
       ],
       eventTableData: [

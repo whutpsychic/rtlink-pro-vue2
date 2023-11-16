@@ -40,6 +40,8 @@ export default {
     varOffset: { type: Boolean, default: false },
     // 偏移量分隔符
     offsetSpliter: { type: String, default: "" },
+    // 变量修饰符
+    varDecoration: { type: String, default: "" },
   },
   data() {
     return {
@@ -51,12 +53,15 @@ export default {
   computed: {
     optionValue() {
       const { value, varOffset, offsetSpliter } = this;
+      const { preVarDecoration } = this
+      const { suffVarDecoration } = this
+
       if (!value) return null;
       if (varOffset) {
         const arr = value.split(offsetSpliter);
-        return arr[0];
+        return arr[0].replace(preVarDecoration, '');
       } else {
-        return value;
+        return value.replace(preVarDecoration, '').replace(suffVarDecoration, '');
       }
     },
     offsetValue() {
@@ -74,6 +79,14 @@ export default {
       }
       return result;
     },
+    preVarDecoration() {
+      const { varDecoration } = this;
+      return varDecoration[0] || "";
+    },
+    suffVarDecoration() {
+      const { varDecoration } = this;
+      return varDecoration[1] || "";
+    },
   },
   mounted() {
     // 初始化矫正一次偏移量的值
@@ -88,7 +101,13 @@ export default {
       this.$emit('delete');
     },
     handleChange(v) {
-      this.$emit('change', v)
+      const { varOffset, preVarDecoration, suffVarDecoration, offsetSpliter, offsetValue } = this;
+      if (varOffset) {
+        this.$emit('change', `${preVarDecoration}${v}${offsetSpliter}${offsetValue}${suffVarDecoration}`);
+      }
+      else {
+        this.$emit('change', `${preVarDecoration}${v}${suffVarDecoration}`);
+      }
     },
     // 计算下拉选择框的宽度
     _calcWidth() {
@@ -115,10 +134,12 @@ export default {
     },
     // 改变偏移量时
     onChangeOffset(v) {
-      let { value, offsetSpliter } = this;
+      const { value, offsetSpliter, preVarDecoration, suffVarDecoration } = this;
+      if (!value) return;
       const arr = value.split(offsetSpliter);
-      const result = `${arr[0]}${offsetSpliter}${v}`;
-      this.$emit('change', result);
+      const result = `${arr[0]}${offsetSpliter}${v}`.replace(preVarDecoration, '').replace(suffVarDecoration, '');
+      const decoratedResult = `${preVarDecoration}${result}${suffVarDecoration}`;
+      this.$emit('change', decoratedResult);
     },
     // 矫正偏移量的值
     correctValueWithOffset() {
@@ -128,6 +149,7 @@ export default {
       }
       else {
         let { value, offsetSpliter } = this;
+        if (!value) return;
         const arr = value.split(offsetSpliter);
         if (!arr[1]) {
           this.onChangeOffset(0);

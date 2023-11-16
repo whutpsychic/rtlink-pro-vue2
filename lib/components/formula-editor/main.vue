@@ -23,13 +23,15 @@
     </el-collapse>
     <div v-show="showAllSymbols" class="spliter"></div>
     <!-- 错误信息提示处 -->
-    <div class="fmerror-msg-tips"></div>
+    <div v-if="errorMessage" class="fmerror-msg-tips">
+      <el-alert :title="errorMessage" type="error" show-icon :closable="false" />
+    </div>
     <!-- 公式字符串预览 -->
     <div class="formulastr-previewer">
-      <p>
-        <span v-if="formulaStr">{{ formulaStr }}</span>
-        <span v-else class="placeholder">公式预览</span>
+      <p v-if="formulaStr">
+        <span>{{ formulaStr }}</span>
       </p>
+      <p v-else class="placeholder">公式预览</p>
     </div>
     <div class="spliter"></div>
     <!-- 公式值编辑处 -->
@@ -37,7 +39,7 @@
       <component v-for="(item, i) in value" :key="i" :is="_judgeItemTypeByValue(item)" :label="_getItemLabelByValue(item)"
         :value="item" @delete="() => onDeleteItem(i)" @select="() => onSelectItem(i)" :curr="currIndex === i"
         @change="(v) => onChangeItemValue(v, i)" :varOptions="varOptions" :varOffset="varOffset"
-        :offsetSpliter="offsetSpliter" />
+        :offsetSpliter="offsetSpliter" :varDecoration="varDecoration" />
     </div>
   </div>
 </template>
@@ -61,11 +63,13 @@ export default {
     // 额外符号
     extraSymbols: { type: Array, default: () => ([]) },
     // 错误信息
-    errmsg: { type: String, default: null },
+    errmsg: { type: [String, Boolean], default: null },
     // 变量偏移量
     varOffset: { type: Boolean, default: false },
     // 偏移量分隔符
     offsetSpliter: { type: String, default: "|" },
+    // 变量修饰符
+    varDecoration: { type: String, default: "" },
   },
   model: {
     prop: "value",
@@ -79,6 +83,22 @@ export default {
       })
       return result.join("");
     },
+    preVarDecoration() {
+      const { varDecoration } = this;
+      return varDecoration[0] || "";
+    },
+    suffVarDecoration() {
+      const { varDecoration } = this;
+      return varDecoration[1] || "";
+    },
+    errorMessage() {
+      const { errmsg, error } = this;
+      // 如果被关闭了则始终不显示
+      if (typeof (errmsg) === 'boolean' && !errmsg) {
+        return
+      }
+      return errmsg || error;
+    }
   },
   data() {
     return {
@@ -96,6 +116,8 @@ export default {
       ],
       // 当前操作的节点索引
       currIndex: -1,
+      // 默认的错误信息
+      error: ""
     }
   },
   watch: {
@@ -190,30 +212,40 @@ export default {
       }
     },
     // 根据项的值获取其label
-    _getItemLabelByValue(item) {
+    _getItemLabelByValue(rawitem) {
       const { _isSymbol, _isConst, varOptions, offsetSpliter } = this;
-      const symbolTarget = _isSymbol(item);
-      if (symbolTarget) {
-        return symbolTarget.label;
+      const { preVarDecoration, suffVarDecoration } = this;
+      if (!rawitem) {
+        return "未选择的变量";
       }
-      else if (_isConst(item)) {
-        return item;
+      else if (_isConst(rawitem)) {
+        return rawitem;
       }
       else {
-        const target = varOptions.find((_item) => {
-          return _item.value === item;
-        })
-        // 偏移量功能
-        const target2 = varOptions.find((_item) => {
-          const arr = item.split(offsetSpliter);
-          return _item.value === arr[0];
-        });
-        const finalTarget = target || target2;
-        if (finalTarget) {
-          return finalTarget.label;
+        const item = rawitem.replace(preVarDecoration, '').replace(suffVarDecoration, '')
+        const symbolTarget = _isSymbol(item);
+        if (symbolTarget) {
+          return symbolTarget.label;
         }
         else {
-          return "未选择的变量";
+          const target = varOptions.find((_item) => {
+            return _item.value === item;
+          })
+          // 偏移量功能
+          const target2 = varOptions.find((_item) => {
+            if (!item) {
+              return
+            }
+            const arr = item.split(offsetSpliter);
+            return _item.value === arr[0];
+          });
+          const finalTarget = target || target2;
+          if (finalTarget) {
+            return finalTarget.label;
+          }
+          else {
+            return "未知变量";
+          }
         }
       }
     },
@@ -221,7 +253,7 @@ export default {
 }
 </script>
 <style src="./style.css"></style>
-<style scoped>
+<style>
 .rt-formula-editor-container {
   margin: 0;
   padding: 20px;
@@ -236,19 +268,19 @@ export default {
   /* background-color: orange; */
 }
 
-.spliter {
+.rt-formula-editor-container .spliter {
   width: 100%;
   height: 1px;
   background-color: #eee;
   margin: 10px 0;
 }
 
-.rt-formula-main-content {
+.rt-formula-editor-container .rt-formula-main-content {
   display: flex;
   flex-wrap: wrap;
 }
 
-.placeholder {
+.rt-formula-editor-container .placeholder {
   color: #ddd;
 }
 </style>
