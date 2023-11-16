@@ -1,0 +1,204 @@
+<template>
+  <div class="page-content-container">
+    <h1>FormulaEditor 公式编辑器</h1>
+    <h2>设计思路</h2>
+    <ul>
+      <li>公式编辑器常用于表单内数据编辑，因此本组件侧重于编辑功能，即数据输入的手段。</li>
+      <li>编辑公式时应该在头部展示结果字符串以预览效果。</li>
+      <li>修改变量应该可以在任意位置修改。</li>
+      <li>本组件的工作模式类似于原生的{{ `
+        < select />` }}，需要装填变量数据源；单项类似于{{ `
+        < option />` }}根据值渲染文字。
+      </li>
+      <li>因在实际应用时，变量数据往往巨大且逻辑关系纷繁复杂。所以提供两种默认选择变量的模式，以及自定义选择模式。当变量数据较少时可选用 select 模式；当变量数据较多时可选用 table
+        模式。如果变量的选取需要调用多接口复杂查询（或前两种模式无法满足需求）时，请使用自定义选择模式（例如根据树形结构查询变量表格）。自定义选择模式下仅暴露变量点击事件（要选择时）接口，具体UI需自行编写。</li>
+      <li>公式内容由固定值（数字）、变量、符号3种类型组成。</li>
+      <li>默认的运算符号只有+-*/()，预留了 extraSymbols 属性用以添加额外的自定义符号。</li>
+      <li>公式编辑器拥有内置默认的公式校验方法：1.变量不能连续出现；2.（固定值）数字不能连续出现；3.符号非 "(" 或 ")" 则不能连续出现；4.不能以非 "("
+        符号开头。这些内置的规则只是初步鉴定，无法保证所编辑的公式的合法性，如果您的公式校验规则复杂，需要您配合 @change 事件自行编写校验逻辑代码并将结论反馈给预留的 errmsg 接口。当 errmsg
+        有值时则显示其内容作为错误信息；否则按照默认的内置规则显示公式的错误信息。如果给 errmsg 赋了 false，则无论如何也不会显示错误信息。</li>
+      <li>适配瑞太的业务逻辑，公式变量可能存在常数偏移量，使用 varOffset 控制是否开启之。</li>
+    </ul>
+    <h2>基础用法</h2>
+    <demo-block height="400">
+      <template #main>
+        <rt-formula-editor ref="fe" v-model="formula" :varOptions="varOptions" filterable
+          :extraSymbols="extraSymbols" varOffset></rt-formula-editor>
+        <el-button @click="look">查看值</el-button>
+      </template>
+      <template #codes>
+        <pre v-highlightjs>
+          <code class="html">{{ codehtml }}</code>
+          <code class="javascript">{{ code }}</code>
+        </pre>
+      </template>
+    </demo-block>
+    <h2>Attributes</h2>
+    <el-table :data="attrTableData" style="width: 100%">
+      <el-table-column prop="arg" label="参数" width="180">
+      </el-table-column>
+      <el-table-column prop="des" label="说明">
+      </el-table-column>
+      <el-table-column prop="type" label="类型" width="150">
+      </el-table-column>
+      <el-table-column prop="options" label="可选值">
+      </el-table-column>
+      <el-table-column prop="default" label="默认值">
+      </el-table-column>
+    </el-table>
+    <h2>Events</h2>
+    <el-table :data="eventTableData" style="width: 100%">
+      <el-table-column prop="name" label="事件名称" width="180">
+      </el-table-column>
+      <el-table-column prop="des" label="说明">
+      </el-table-column>
+      <el-table-column prop="arg" label="回调参数" width="150">
+      </el-table-column>
+    </el-table>
+    <h2>Methods</h2>
+    <el-table :data="methodTableData" style="width: 100%">
+      <el-table-column prop="name" label="方法名" width="180">
+      </el-table-column>
+      <el-table-column prop="des" label="说明">
+      </el-table-column>
+      <el-table-column prop="arg" label="参数" width="150">
+      </el-table-column>
+    </el-table>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      formula: ['option2', '+', '-'],
+      varOptions: [
+        { label: "第一个选项", value: "option1" },
+        { label: "第二个选项222", value: "option2" },
+        {
+          label: "第三个选项选项选项", value: "option3", children: [
+            { label: "option3_1", value: "option3_1" },
+            { label: "option3_2", value: "option3_2" },
+            { label: "option3_3", value: "option3_3" },
+          ]
+        },
+      ],
+      extraSymbols: [
+        { label: "恶意非常规符号", value: "option11" },
+        { label: "^", value: "^" },
+        { label: "$", value: "$" },
+      ],
+      codehtml: `<rt-formula-editor v-model="formula" :variableOptions="options"></rt-formula-editor>`,
+      code:
+        `export default {
+  data() {
+    return {
+      formula: [],
+      options: [
+        { label: "option1", value: "option1" },
+        { label: "option2", value: "option2" },
+        {
+          label: "option3", value: "option3", children: [
+            { label: "option3_1", value: "option3_1" },
+            { label: "option3_2", value: "option3_2" },
+            { label: "option3_3", value: "option3_3" },
+          ]
+        },
+      ],
+    }
+  }
+}`,
+      attrTableData: [
+        {
+          arg: 'value/v-model',
+          des: '绑定值',
+          type: 'Array',
+          options: ' — ',
+          default: ' — '
+        },
+        {
+          arg: 'varOptions',
+          des: '变量值数据源',
+          type: 'Array',
+          options: ' — ',
+          default: ' — '
+        },
+        {
+          arg: 'varSelectMode',
+          des: '选择变量值模式',
+          type: 'string',
+          options: ' select | table | custom',
+          default: ' select '
+        },
+        {
+          arg: 'filterable',
+          des: '变量是否可搜索选项（仅适用于 varSelectMode = "select" 时）',
+          type: 'Boolean',
+          options: ' — ',
+          default: 'false'
+        },
+        {
+          arg: 'extraSymbols',
+          des: '附加的自定义符号',
+          type: 'Array',
+          options: ' — ',
+          default: ' — '
+        },
+        {
+          arg: 'errmsg',
+          des: '错误信息',
+          type: 'string | Boolean',
+          options: ' — ',
+          default: ' — '
+        },
+        {
+          arg: 'varOffset',
+          des: '变量是否有偏移量',
+          type: 'Boolean',
+          options: ' — ',
+          default: ' false '
+        }
+      ],
+      eventTableData: [
+        {
+          name: 'change',
+          des: '值发生变化时触发',
+          arg: '当前值',
+        }
+      ],
+      methodTableData: [
+        {
+          name: 'getStrResult',
+          des: '获取字符串类型的表示式',
+          arg: ' — ',
+        },
+        {
+          name: 'validate',
+          des: '进行一次内置的默认校验并返回校验结果',
+          arg: ' — ',
+        },
+      ],
+    }
+  },
+  methods: {
+    look() {
+      let result = this.$refs.fe.getStrResult()
+      console.log(result)
+      console.log(this.formula)
+    }
+  },
+}
+
+</script>
+
+
+<style scoped>
+p {
+  font-size: 15px;
+}
+
+li {
+  font-size: 15px;
+  margin-bottom: 0.6em;
+}
+</style>

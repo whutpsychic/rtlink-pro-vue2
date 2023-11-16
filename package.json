@@ -1,6 +1,6 @@
 {
   "name": "rtlink-pro-vue2",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "description": "本项目是适用于 vue2 框架的前端开源项目，瑞太智联自用的UI组件库。\r 要求 vue2 版本 >= 2.5.17。\r 本项目UI部分依赖于 elementUI。",
   "main": "./lib/main.js",
   "scripts": {
@@ -10,7 +10,7 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
   },
   "peerDependencies": {
-    "vue": ">=2.5.17"
+    "vue": "^2.5.17"
   },
   "dependencies": {
     "element-ui": "^2.15.14"
@@ -23,8 +23,12 @@
     "eslint": "^8.5.0",
     "eslint-plugin-vue": "^9.0.0",
     "prettier": "^2.5.1",
+    "sass": "^1.69.5",
     "terser": "^5.14.2",
-    "vite": "^3.0.2"
+    "vite": "^3.0.2",
+    "vue-highlightjs": "^1.3.3",
+    "vue-router": "^3.6.5",
+    "vuex": "^3.6.2"
   },
   "repository": {
     "type": "git",
