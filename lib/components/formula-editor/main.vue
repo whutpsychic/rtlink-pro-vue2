@@ -36,7 +36,8 @@
     <div class="rt-formula-main-content">
       <component v-for="(item, i) in value" :key="i" :is="_judgeItemTypeByValue(item)" :label="_getItemLabelByValue(item)"
         :value="item" @delete="() => onDeleteItem(i)" @select="() => onSelectItem(i)" :curr="currIndex === i"
-        @change="(v) => onChangeItemValue(v, i)" :varOptions="varOptions" :varOffset="varOffset" />
+        @change="(v) => onChangeItemValue(v, i)" :varOptions="varOptions" :varOffset="varOffset"
+        :offsetSpliter="offsetSpliter" />
     </div>
   </div>
 </template>
@@ -63,6 +64,8 @@ export default {
     errmsg: { type: String, default: null },
     // 变量偏移量
     varOffset: { type: Boolean, default: false },
+    // 偏移量分隔符
+    offsetSpliter: { type: String, default: "|" },
   },
   model: {
     prop: "value",
@@ -188,7 +191,7 @@ export default {
     },
     // 根据项的值获取其label
     _getItemLabelByValue(item) {
-      const { _isSymbol, _isConst, varOptions } = this;
+      const { _isSymbol, _isConst, varOptions, offsetSpliter } = this;
       const symbolTarget = _isSymbol(item);
       if (symbolTarget) {
         return symbolTarget.label;
@@ -200,8 +203,14 @@ export default {
         const target = varOptions.find((_item) => {
           return _item.value === item;
         })
-        if (target) {
-          return target.label;
+        // 偏移量功能
+        const target2 = varOptions.find((_item) => {
+          const arr = item.split(offsetSpliter);
+          return _item.value === arr[0];
+        });
+        const finalTarget = target || target2;
+        if (finalTarget) {
+          return finalTarget.label;
         }
         else {
           return "未选择的变量";

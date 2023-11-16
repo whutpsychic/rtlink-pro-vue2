@@ -18,12 +18,13 @@
         符号开头。这些内置的规则只是初步鉴定，无法保证所编辑的公式的合法性，如果您的公式校验规则复杂，需要您配合 @change 事件自行编写校验逻辑代码并将结论反馈给预留的 errmsg 接口。当 errmsg
         有值时则显示其内容作为错误信息；否则按照默认的内置规则显示公式的错误信息。如果给 errmsg 赋了 false，则无论如何也不会显示错误信息。</li>
       <li>适配瑞太的业务逻辑，公式变量可能存在常数偏移量，使用 varOffset 控制是否开启之。</li>
+      <li>开启偏移量校正后，组件会自动读取值分隔符后面的字符，并将之转为数字作为偏移量值;如果初始值里面没有偏移量，那么组件会将之自动校正至0。</li>
     </ul>
     <h2>基础用法</h2>
     <demo-block height="400">
       <template #main>
-        <rt-formula-editor ref="fe" v-model="formula" :varOptions="varOptions" filterable
-          :extraSymbols="extraSymbols" varOffset></rt-formula-editor>
+        <rt-formula-editor ref="fe" v-model="formula" :varOptions="varOptions" filterable :extraSymbols="extraSymbols"
+          ></rt-formula-editor>
         <el-button @click="look">查看值</el-button>
       </template>
       <template #codes>
@@ -43,7 +44,7 @@
       </el-table-column>
       <el-table-column prop="options" label="可选值">
       </el-table-column>
-      <el-table-column prop="default" label="默认值">
+      <el-table-column prop="default" label="默认值" width="100">
       </el-table-column>
     </el-table>
     <h2>Events</h2>
@@ -157,6 +158,13 @@ export default {
           type: 'Boolean',
           options: ' — ',
           default: ' false '
+        },
+        {
+          arg: 'offsetSpliter',
+          des: '自定义变量值与偏移量值的分隔符号',
+          type: 'string',
+          options: ' — ',
+          default: ' | '
         }
       ],
       eventTableData: [
