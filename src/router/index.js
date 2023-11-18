@@ -6,8 +6,7 @@ Vue.use(VueRouter)
 
 const router = new VueRouter({
   mode: 'hash',
-  // base: import.meta.env.BASE_URL,
-  base: '.',
+  base: import.meta.env.BASE_URL,
   routes: [
     // ------------- redirect -------------
     {
