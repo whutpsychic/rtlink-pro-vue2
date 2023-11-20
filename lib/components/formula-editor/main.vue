@@ -23,13 +23,18 @@
     </el-collapse>
     <div v-show="showAllSymbols" class="spliter"></div>
     <!-- 错误信息提示处 -->
-    <div v-if="errorMessage" class="fmerror-msg-tips">
+    <div :class="errorMessage ? `fmerror-msg-tips` : `fmerror-msg-tips hide`">
       <el-alert :title="errorMessage" type="error" show-icon :closable="false" />
     </div>
     <!-- 公式字符串预览 -->
     <div class="formulastr-previewer">
-      <p v-if="formulaStr">
-        <span>{{ formulaStr }}</span>
+      <p v-if="formulaStr" class="formulaStr-can">
+        <!-- <span>{{ formulaStr }}</span> -->
+        <template v-for="(el, i) in elementArr">
+          <span v-if="el.type === 'number'" class="str-number">{{ el.label }}</span>
+          <span v-else-if="el.type === 'symbol'" class="str-symbol">{{ el.label }}</span>
+          <span v-else-if="el.type === 'var'" class="str-var">{{ el.label }}</span>
+        </template>
       </p>
       <p v-else class="placeholder">公式预览</p>
     </div>
@@ -39,15 +44,16 @@
       <component v-for="(item, i) in value" :key="i" :is="_judgeItemTypeByValue(item)" :label="_getItemLabelByValue(item)"
         :value="item" @delete="() => onDeleteItem(i)" @select="() => onSelectItem(i)" :curr="currIndex === i"
         @change="(v) => onChangeItemValue(v, i)" :varOptions="varOptions" :varOffset="varOffset"
-        :offsetSpliter="offsetSpliter" :varDecoration="varDecoration" />
+        :offsetSpliter="offsetSpliter" :varDecoration="varDecoration" :mode="mode" />
     </div>
   </div>
 </template>
 
 <script>
-import SymbolItem from "./common/Symbol.vue";
-import NumberItem from "./common/Number.vue";
-import Item from "./common/Item.vue";
+import SymbolItem from "./items/Symbol.vue";
+import NumberItem from "./items/Number.vue";
+import Item from "./items/Item.vue";
+import defaultRules from './defaultRules.js';
 
 export default {
   components: { Item, NumberItem, SymbolItem },
@@ -57,8 +63,8 @@ export default {
     // 变量数据源
     varOptions: { type: Array, default: () => ([]) },
     // 变量选择模式
-    varSelectMode: { type: String, default: "select" },
-    // 变量数据过多，需要顶部快捷搜索定位（仅 varSelectMode = select）
+    mode: { type: String, default: "select" },
+    // 变量数据过多，需要顶部快捷搜索定位（仅 mode = select）
     filterable: { type: Boolean, default: false },
     // 额外符号
     extraSymbols: { type: Array, default: () => ([]) },
@@ -70,12 +76,15 @@ export default {
     offsetSpliter: { type: String, default: "|" },
     // 变量修饰符
     varDecoration: { type: String, default: "" },
+    // 附加规则
+    rules: { type: Array, default: () => ([]) },
   },
   model: {
     prop: "value",
     event: "change"
   },
   computed: {
+    // 字符串结果
     formulaStr() {
       const { value, _getItemLabelByValue } = this;
       let result = value.map((item) => {
@@ -98,7 +107,32 @@ export default {
         return
       }
       return errmsg || error;
-    }
+    },
+    // 各项数组
+    elementArr() {
+      const { value, _isSymbol, _isConst, _getItemLabelByValue } = this;
+      let result = [];
+
+      value.forEach((item) => {
+        let newItem = { label: null, value: item, type: "unknown" };
+        if (_isConst(item)) {
+          newItem.type = 'number';
+          newItem.label = item;
+        }
+        else if (_isSymbol(item)) {
+          newItem.type = 'symbol';
+          newItem.label = _getItemLabelByValue(item);
+        }
+        else {
+          newItem.type = 'var';
+          newItem.label = _getItemLabelByValue(item);
+        }
+
+        result.push(newItem);
+      })
+
+      return result;
+    },
   },
   data() {
     return {
@@ -122,7 +156,19 @@ export default {
   },
   watch: {
     value(newv, oldv) {
-      console.log(newv);
+      // 在这里检测value
+      const { elementArr, rules } = this;
+      let errmsg;
+      const allRules = [...defaultRules, ...rules]
+      for (let i = 0; i < allRules.length; i++) {
+        const fn = allRules[i].fn;
+        const err = fn(elementArr);
+        if (err) {
+          errmsg = allRules[i].msg;
+          break;
+        }
+      }
+      this.error = errmsg;
     }
   },
   mounted() {
@@ -282,5 +328,31 @@ export default {
 
 .rt-formula-editor-container .placeholder {
   color: #ddd;
+}
+
+.rt-formula-editor-container .formulaStr-can {
+  font-size: 15px;
+}
+
+.rt-formula-editor-container .formulaStr-can .str-number {
+  margin: 0 3px;
+}
+
+.rt-formula-editor-container .formulaStr-can .str-symbol {
+  margin: 0 3px;
+}
+
+.rt-formula-editor-container .formulaStr-can .str-var {
+  margin: 0 3px;
+}
+
+.rt-formula-editor-container .fmerror-msg-tips {
+  overflow: hidden;
+  transition: .3s;
+  height: 40px;
+}
+
+.rt-formula-editor-container .fmerror-msg-tips.hide {
+  height: 0;
 }
 </style>

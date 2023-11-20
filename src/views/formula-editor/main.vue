@@ -10,12 +10,13 @@
         < select />` }}，需要装填变量数据源；单项类似于{{ `
         < option />` }}根据值渲染文字。
       </li>
-      <li>因在实际应用时，变量数据往往巨大且逻辑关系纷繁复杂。所以提供两种默认选择变量的模式，以及自定义选择模式。当变量数据较少时可选用 select 模式；当变量数据较多时可选用 table
+      <li>因在实际应用时，变量数据往往巨大且逻辑关系纷繁复杂。所以提供两种默认选择变量的模式，以及自定义选择模式。当变量数据较少时可选用 select 模式；当变量数据较多时可选用 list
         模式。如果变量的选取需要调用多接口复杂查询（或前两种模式无法满足需求）时，请使用自定义选择模式（例如根据树形结构查询变量表格）。自定义选择模式下仅暴露变量点击事件（要选择时）接口，具体UI需自行编写。</li>
       <li>公式内容由固定值（数字）、变量、符号3种类型组成。</li>
       <li>默认的运算符号只有+-*/()，预留了 extraSymbols 属性用以添加额外的自定义符号。</li>
-      <li>公式编辑器拥有内置默认的公式校验方法：1.变量不能连续出现；2.（固定值）数字不能连续出现；3.符号非 "(" 或 ")" 则不能连续出现；4.不能以非 "("
-        符号开头。这些内置的规则只是初步鉴定，无法保证所编辑的公式的合法性，如果您的公式校验规则复杂，需要您配合 @change 事件自行编写校验逻辑代码并将结论反馈给预留的 errmsg 接口。当 errmsg
+      <li>公式编辑器拥有内置默认的公式校验方法：1.变量不能连续出现；2.常量（数字）不能连续出现；3.符号非 "(" 或 ")" 则不能连续出现；4.不能以非 "("
+        符号开头;5.变量和常量（数字）不能连续出现。这些内置的规则只是初步鉴定，无法保证所编辑的公式的合法性，如果您的公式校验规则复杂，需要您配合 @change 事件自行编写校验逻辑代码并将结论反馈给预留的 errmsg 接口。当
+        errmsg
         有值时则显示其内容作为错误信息；否则按照默认的内置规则显示公式的错误信息。如果给 errmsg 赋了 false，则无论如何也不会显示错误信息。</li>
       <li>适配瑞太的业务逻辑，公式变量可能存在常数偏移量，使用 varOffset 控制是否开启之。</li>
       <li>开启偏移量校正后，组件会自动读取值分隔符后面的字符，并将之转为数字作为偏移量值;如果初始值里面没有偏移量，那么组件会将之自动校正至0。</li>
@@ -25,8 +26,7 @@
     <demo-block height="400">
       <template #main>
         <rt-formula-editor ref="fe" v-model="formula" :varOptions="varOptions" filterable :extraSymbols="extraSymbols"
-          varOffset varDecoration="[]" :errmsg="'错误信息'"></rt-formula-editor>
-        <el-button @click="look">查看值</el-button>
+          varOffset varDecoration="[]" mode="select"></rt-formula-editor>
       </template>
       <template #codes>
         <pre v-highlightjs>
@@ -73,20 +73,14 @@
 export default {
   data() {
     return {
-      formula: ['option2', '+', '-'],
+      formula: [],
       varOptions: [
         { label: "第一个选项", value: "option1" },
         { label: "第二个选项222", value: "option2" },
-        {
-          label: "第三个选项选项选项", value: "option3", children: [
-            { label: "option3_1", value: "option3_1" },
-            { label: "option3_2", value: "option3_2" },
-            { label: "option3_3", value: "option3_3" },
-          ]
-        },
+        { label: "第三个选项选项选项", value: "option3" },
       ],
       extraSymbols: [
-        { label: "恶意非常规符号", value: "option11" },
+        { label: "恶意的非常规符号", value: "option11" },
         { label: "^", value: "^" },
         { label: "$", value: "$" },
       ],
@@ -126,10 +120,10 @@ export default {
           default: ' — '
         },
         {
-          arg: 'varSelectMode',
+          arg: 'mode',
           des: '选择变量值模式',
           type: 'string',
-          options: ' select | table | custom',
+          options: ' select | list | custom',
           default: ' select '
         },
         {
@@ -173,6 +167,13 @@ export default {
           type: 'string',
           options: ' — ',
           default: ' — '
+        },
+        {
+          arg: 'rules',
+          des: '附加的判断规则，用于判断公式的合法性',
+          type: 'Array<function(elArr)>',
+          options: ' — ',
+          default: ' — '
         }
       ],
       eventTableData: [
@@ -194,13 +195,6 @@ export default {
           arg: ' — ',
         },
       ],
-    }
-  },
-  methods: {
-    look() {
-      let result = this.$refs.fe.getStrResult()
-      console.log(result)
-      console.log(this.formula)
     }
   },
 }
