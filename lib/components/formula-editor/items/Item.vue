@@ -3,10 +3,11 @@
     :style="`min-width:${widthWithoutOffset}px;width:${outerWidth};`" @click="$emit('select')">
     <div :style="`min-width:${varOffset ? widthWithOffset : widthWithoutOffset}px;width:${innerWidth};`" class="var-can">
       <el-select v-if="mode === 'select'" style="width:100%;" :value="optionValue" @change="handleChange"
-        :placeholder="placeholder">
+        :placeholder="placeholder" :filterable="filterable">
         <el-option v-for="(item) in varOptions" :key="item.value" :value="item.value" :label="item.label"></el-option>
       </el-select>
       <el-button v-else-if="mode === 'list'" @click="selecting = true">{{ _getLabelByValue() }}</el-button>
+      <el-button v-else-if="mode === 'custom'" @click="$emit('select')">{{ _getLabelByValue() }}</el-button>
       <div v-if="varOffset" class="divider"></div>
       <el-input-number v-if="varOffset" :style="`min-width:${offsetWidth}px;width:${offsetWidth}px;`" :value="offsetValue"
         controls-position="right" @change="onChangeOffset"></el-input-number>
@@ -33,6 +34,8 @@ export default {
     curr: { type: Boolean, default: false },
     // 变量可选值
     varOptions: { type: Array, default: () => ([]) },
+    // 变量数据过多，需要顶部快捷搜索定位（仅 mode = select）
+    filterable: { type: Boolean, default: false },
     // 变量选择模式
     mode: { type: String, default: "" },
     // 是否带有偏移量

@@ -35,7 +35,7 @@ export default {
   computed: {
     currVars() {
       const { varOptions, current, pageSize } = this;
-      let result = varOptions.slice((current - 1) * pageSize, pageSize)
+      let result = varOptions.slice((current - 1) * pageSize, current * pageSize)
       return result;
     },
   },
@@ -44,7 +44,7 @@ export default {
       this.pageSize = size;
     },
     handleCurrentChange(p) {
-      console.log(p)
+      this.current = p;
     },
     onSelectItem(v) {
       const { varOffset, offsetSpliter, varDecoration } = this;
@@ -69,5 +69,12 @@ export default {
   margin-bottom: 20px;
   min-height: 200px;
   overflow-y: auto;
+  max-height: 50vh;
+}
+
+.rt-formula-listtable-container .main-items .el-button {
+  margin-right: 10px;
+  margin-left: 0;
+  margin-bottom: 10px;
 }
 </style>

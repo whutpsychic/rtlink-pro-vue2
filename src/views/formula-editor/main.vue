@@ -22,19 +22,31 @@
       <li>开启偏移量校正后，组件会自动读取值分隔符后面的字符，并将之转为数字作为偏移量值;如果初始值里面没有偏移量，那么组件会将之自动校正至0。</li>
       <li>预留了变量值修饰符接口，你可以按照自己的喜好定义之。</li>
     </ul>
-    <h2>基础用法</h2>
-    <demo-block height="400">
-      <template #main>
-        <rt-formula-editor ref="fe" v-model="formula" :varOptions="varOptions" filterable :extraSymbols="extraSymbols"
-          varOffset varDecoration="[]" mode="select"></rt-formula-editor>
-      </template>
-      <template #codes>
-        <pre v-highlightjs>
-          <code class="html">{{ codehtml }}</code>
-          <code class="javascript">{{ code }}</code>
-        </pre>
-      </template>
-    </demo-block>
+    <!-- 基础用法 -->
+    <Basic />
+    <div style="height:30px;" />
+    <!-- 变量选项可搜索(仅mode为select时) -->
+    <Filterable />
+    <div style="height:30px;" />
+    <!-- 自定义附加符号 -->
+    <CustomSymbols />
+    <div style="height:30px;" />
+    <!-- 错误信息 -->
+    <ErrorMsg />
+    <div style="height:30px;" />
+    <!-- 偏移量 -->
+    <Offsets />
+    <div style="height:30px;" />
+    <!-- 自定义校验规则 -->
+    <CustomRules />
+    <div style="height:30px;" />
+    <!-- 列表模式选择变量 -->
+    <ListTable />
+    <div style="height:30px;" />
+    <!-- 自定义选择变量 -->
+    <CustomVarSelector />
+    <div style="height:30px;" />
+
     <h2>Attributes</h2>
     <el-table :data="attrTableData" style="width: 100%">
       <el-table-column prop="arg" label="参数" width="180">
@@ -70,40 +82,19 @@
 </template>
 
 <script>
+import Basic from './usage/basic.vue';
+import Filterable from './usage/filterable.vue';
+import CustomSymbols from './usage/customSymbols.vue';
+import ErrorMsg from './usage/errorMsg.vue';
+import Offsets from './usage/offsets.vue';
+import CustomRules from './usage/customRules.vue';
+import ListTable from './usage/listTable.vue';
+import CustomVarSelector from './usage/customVarSelector.vue';
+
 export default {
+  components: { Basic, Filterable, CustomSymbols, ErrorMsg, Offsets, CustomRules, ListTable, CustomVarSelector },
   data() {
     return {
-      formula: [],
-      varOptions: [
-        { label: "第一个选项", value: "option1" },
-        { label: "第二个选项222", value: "option2" },
-        { label: "第三个选项选项选项", value: "option3" },
-      ],
-      extraSymbols: [
-        { label: "恶意的非常规符号", value: "option11" },
-        { label: "^", value: "^" },
-        { label: "$", value: "$" },
-      ],
-      codehtml: `<rt-formula-editor v-model="formula" :variableOptions="options"></rt-formula-editor>`,
-      code:
-        `export default {
-  data() {
-    return {
-      formula: [],
-      options: [
-        { label: "option1", value: "option1" },
-        { label: "option2", value: "option2" },
-        {
-          label: "option3", value: "option3", children: [
-            { label: "option3_1", value: "option3_1" },
-            { label: "option3_2", value: "option3_2" },
-            { label: "option3_3", value: "option3_3" },
-          ]
-        },
-      ],
-    }
-  }
-}`,
       attrTableData: [
         {
           arg: 'value/v-model',
@@ -181,6 +172,11 @@ export default {
           name: 'change',
           des: '值发生变化时触发',
           arg: '当前值',
+        },
+        {
+          name: 'select',
+          des: '配合mode=custom时使用',
+          arg: '当前操作项索引',
         }
       ],
       methodTableData: [
@@ -188,19 +184,13 @@ export default {
           name: 'getStrResult',
           des: '获取字符串类型的表示式',
           arg: ' — ',
-        },
-        {
-          name: 'validate',
-          des: '进行一次内置的默认校验并返回校验结果',
-          arg: ' — ',
-        },
+        }
       ],
     }
   },
 }
 
 </script>
-
 
 <style scoped>
 p {

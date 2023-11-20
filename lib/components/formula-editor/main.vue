@@ -44,7 +44,7 @@
       <component v-for="(item, i) in value" :key="i" :is="_judgeItemTypeByValue(item)" :label="_getItemLabelByValue(item)"
         :value="item" @delete="() => onDeleteItem(i)" @select="() => onSelectItem(i)" :curr="currIndex === i"
         @change="(v) => onChangeItemValue(v, i)" :varOptions="varOptions" :varOffset="varOffset"
-        :offsetSpliter="offsetSpliter" :varDecoration="varDecoration" :mode="mode" />
+        :offsetSpliter="offsetSpliter" :varDecoration="varDecoration" :mode="mode" :filterable="filterable" />
     </div>
   </div>
 </template>
@@ -229,6 +229,9 @@ export default {
     // 选择某项
     onSelectItem(index) {
       this.currIndex = index;
+      if (this.mode === 'custom') {
+        this.$emit('select', index)
+      }
     },
     // 判断是否是符号类型
     _isSymbol(item) {
