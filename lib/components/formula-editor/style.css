@@ -1,3 +1,7 @@
+.rt-formula-editor-container {
+  font-size: 15px;
+}
+
 .rt-formula-item-can {
   display: flex;
   flex-wrap: wrap;

@@ -1,4 +1,4 @@
-import{n as a}from"./index.c37c3227.js";const s={data(){return{formula:[],varOptions:[{label:"\u7B2C\u4E00\u4E2A\u9009\u9879",value:"option1"},{label:"\u7B2C\u4E8C\u4E2A\u9009\u9879",value:"option2"},{label:"\u7B2C\u4E09\u4E2A\u9009\u9879",value:"option3"}],codehtml:'<rt-formula-editor ref="fe" v-model="formula" :varOptions="varOptions"></rt-formula-editor>',code:`export default {
+import{n as a}from"./index.010e17fa.js";const s={data(){return{formula:[],varOptions:[{label:"\u7B2C\u4E00\u4E2A\u9009\u9879",value:"option1"},{label:"\u7B2C\u4E8C\u4E2A\u9009\u9879",value:"option2"},{label:"\u7B2C\u4E09\u4E2A\u9009\u9879",value:"option3"}],codehtml:'<rt-formula-editor ref="fe" v-model="formula" :varOptions="varOptions"></rt-formula-editor>',code:`export default {
   data() {
     return {
       formula: [],
