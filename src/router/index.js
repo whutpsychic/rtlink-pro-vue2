@@ -28,6 +28,17 @@ const router = new VueRouter({
           path: 'quick-start',
           component: () => import('../views/quick-start/main.vue')
         },
+        // 使用图标
+        {
+          path: 'use-icons',
+          component: () => import('../views/use-icons/main.vue')
+        },
+        // ---------------------------------------------------------
+        // 公式编辑器
+        {
+          path: 'icons',
+          component: () => import('../views/icons/main.vue')
+        },
         // 公式编辑器
         {
           path: 'formula-editor',
