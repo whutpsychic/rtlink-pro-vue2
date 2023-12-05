@@ -1,15 +1,9 @@
 <template>
   <div>
     <h2>错误信息</h2>
-    <demo-block height="400">
+    <demo-block :codehtml="codehtml" :code="code">
       <template #main>
         <rt-formula-editor ref="fe" v-model="formula" :varOptions="varOptions" errmsg="这里是一些错误信息"></rt-formula-editor>
-      </template>
-      <template #codes>
-        <pre v-highlightjs>
-          <code class="html">{{ codehtml }}</code>
-          <code class="javascript">{{ code }}</code>
-        </pre>
       </template>
     </demo-block>
   </div>

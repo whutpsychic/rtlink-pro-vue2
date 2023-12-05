@@ -5,29 +5,44 @@
     </div>
     <div class="collapse-btns">
       <el-button type="text" @click="showCodes = !showCodes">
-        <span class="code-ecli">{{ showCodes ? '</>' : '< >' }}</span>
+        <span class="code-ecli">{{ showCodes ? '</>' : '<>' }}</span>
       </el-button>
     </div>
-    <div :class="'code-can'"
-      :style="`height:${showCodes ? height : 0}px;${showCodes ? 'border-bottom:solid 1px #ddd;' : 'border-bottom:none'};`">
-      <slot name="codes"></slot>
+    <div v-if="codehtml" :class="'code-can'"
+      :style="`height:${showCodes ? height1 : 0}px;${showCodes ? 'border-bottom:solid 1px #ddd;' : 'border-bottom:none'};`">
+      <pre v-highlightjs>
+          <code class="html">{{ codehtml }}</code>
+        </pre>
+    </div>
+    <div v-if="code" :class="'code-can'"
+      :style="`height:${showCodes ? height2 : 0}px;${showCodes ? 'border-bottom:solid 1px #ddd;' : 'border-bottom:none'};`">
+      <pre v-highlightjs>
+          <code class="javascript">{{ code }}</code>
+        </pre>
     </div>
   </div>
 </template>
 
 <script>
-
 export default {
   props: {
-    height: { type: [Number, String], default: 0 }
+    codehtml: { type: String, default: '' },
+    code: { type: String, default: '' },
   },
   data() {
     return {
       showCodes: false,
     }
   },
-  methods: {
-
+  computed: {
+    height1() {
+      const length = this.codehtml.split('\n').length
+      return length * 16 + 50;
+    },
+    height2() {
+      const length = this.code.split('\n').length
+      return length * 16 + 50;
+    },
   }
 }
 </script>

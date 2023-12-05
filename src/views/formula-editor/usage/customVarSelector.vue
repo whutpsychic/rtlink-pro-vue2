@@ -1,7 +1,7 @@
 <template>
   <div>
     <h2>自定义变量选择</h2>
-    <demo-block height="950">
+    <demo-block :codehtml="codehtml" :code="code">
       <template #main>
         <rt-formula-editor ref="fe" v-model="formula" :varOptions="varOptions" :rules="rules" mode="custom"
           @select="onSelect"></rt-formula-editor>
@@ -10,12 +10,6 @@
             {{ item.label }}
           </el-button>
         </el-dialog>
-      </template>
-      <template #codes>
-        <pre v-highlightjs>
-          <code class="html">{{ codehtml }}</code>
-          <code class="javascript">{{ code }}</code>
-        </pre>
       </template>
     </demo-block>
   </div>

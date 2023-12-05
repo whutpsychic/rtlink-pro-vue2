@@ -2,16 +2,10 @@
   <div>
     <h2>自定义附加符号</h2>
     <p>仅 mode 为 select 时</p>
-    <demo-block height="400">
+    <demo-block :codehtml="codehtml" :code="code">
       <template #main>
         <rt-formula-editor ref="fe" v-model="formula" :varOptions="varOptions"
           :extraSymbols="extraSymbols"></rt-formula-editor>
-      </template>
-      <template #codes>
-        <pre v-highlightjs>
-          <code class="html">{{ codehtml }}</code>
-          <code class="javascript">{{ code }}</code>
-        </pre>
       </template>
     </demo-block>
   </div>

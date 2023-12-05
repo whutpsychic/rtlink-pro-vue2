@@ -9,8 +9,9 @@ import 'element-ui/lib/theme-chalk/index.css';
 
 import RtlinkUI from '$/main.js';
 
+import 'highlight.js/styles/rainbow.min.css'
+import 'highlight.js/lib/common'
 import VueHighlightJS from 'vue-highlightjs'
-import 'highlight.js/styles/default.css' // or other highlight.js theme
 
 import DemoBlock from "@/components/DemoBlock.vue"
 
