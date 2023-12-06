@@ -1,7 +1,6 @@
 <template>
-  <div :class="curr ? 'rt-formula-item-can var current' : 'rt-formula-item-can var'"
-    :style="`min-width:${widthWithoutOffset}px;width:${outerWidth};`" @click="$emit('select')">
-    <div :style="`min-width:${varOffset ? widthWithOffset : widthWithoutOffset}px;width:${innerWidth};`" class="var-can">
+  <div :class="curr ? 'rt-formula-item-can var current' : 'rt-formula-item-can var'" @click="$emit('select')">
+    <div :style="`width:${innerWidth};`" class="var-can">
       <el-select v-if="mode === 'select'" style="width:100%;" :value="optionValue" @change="handleChange"
         :placeholder="placeholder" :filterable="filterable">
         <el-option v-for="(item) in varOptions" :key="item.value" :value="item.value" :label="item.label"></el-option>
@@ -12,7 +11,7 @@
       <el-input-number v-if="varOffset" :style="`min-width:${offsetWidth}px;width:${offsetWidth}px;`" :value="offsetValue"
         controls-position="right" @change="onChangeOffset"></el-input-number>
     </div>
-    <div>
+    <div class="icon-can">
       <i class="el-icon-circle-close" @click="onDelete"></i>
     </div>
     <el-dialog v-if="mode === 'list'" :visible.sync="selecting" title="选择变量">
@@ -111,6 +110,19 @@ export default {
 
       const finalTarget = target || target2;
 
+      // 短字方案
+      function _shortFa(_L) {
+        return varOffset ? `calc(${_L * 1 + 1.5}em + ${offsetWidth + 50}px)` : `calc(${_L * 1 + 1.5}em + 30px)`;
+      }
+      // 中字长方案
+      function _normalFa(_L) {
+        return varOffset ? `calc(${_L * 1 + 1.2}em + ${offsetWidth + 60}px)` : `calc(${_L * 1 + 1.2}em + 30px)`;
+      }
+      // 巨长字方案
+      function _longFa(_L) {
+        return varOffset ? `calc(${_L * 1 + 1.5}em + ${offsetWidth + 60}px)` : `calc(${_L * 1 + 1}em + 20px)`;
+      }
+
       if (mode === 'select') {
         // 没找到label的情况
         if (!finalTarget) {
@@ -120,7 +132,7 @@ export default {
         else {
           const L = finalTarget.label.length;
           // 根据label长度设置宽度
-          return varOffset ? `calc(${L * 1}em + ${offsetWidth + 60}px)` : `calc(${L * 1}em + 30px)`;
+          return L <= 8 ? _shortFa(L) : (L <= 16 ? _normalFa(L) : _longFa(L))
         }
       }
       // button 模式
@@ -247,7 +259,7 @@ export default {
 .rt-formula-item-can .divider {
   display: inline-block;
   width: 1px;
-  height: 100%;
+  height: 20px;
   background-color: #ddd;
   margin: 0 10px;
 }

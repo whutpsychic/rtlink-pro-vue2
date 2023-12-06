@@ -3,7 +3,7 @@
     <div>
       <el-input-number :value="value" controls-position="right" @change="handleChange"></el-input-number>
     </div>
-    <div>
+    <div class="icon-can">
       <i class="el-icon-circle-close" @click="onDelete"></i>
     </div>
   </div>

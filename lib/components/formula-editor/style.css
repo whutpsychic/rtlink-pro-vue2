@@ -3,18 +3,15 @@
 }
 
 .rt-formula-item-can {
-  display: flex;
-  flex-wrap: wrap;
-  align-content: space-between;
   padding: 6px;
-  height: 56px;
   user-select: none;
   border: dashed 1px transparent;
 }
 
-/* 配合 element-ui small 尺寸固定器宽度 */
-.rt-formula-item-can.const {
-  width: 130px;
+.rt-formula-item-can.symbol-can {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: space-between;
 }
 
 .rt-formula-item-can.current {
@@ -35,6 +32,10 @@
 
 .rt-formula-item-can i {
   cursor: pointer;
+}
+
+.rt-formula-item-can .icon-can {
+  margin-top: 10px;
 }
 
 /* ------------------ fixed element-ui ------------------ */

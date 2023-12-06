@@ -14,6 +14,7 @@
     </div>
     <!-- 分割线 -->
     <div v-if="!(extraSymbols && extraSymbols.length > 0)" class="spliter"></div>
+    <div v-else style="height:10px;"></div>
     <!-- 额外的符号显示栏 -->
     <el-collapse v-if="extraSymbols && extraSymbols.length > 0" :value="showAllSymbols ? 'extraSymbols' : null">
       <el-collapse-item title="其他符号" name="extraSymbols">
@@ -314,7 +315,6 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  /* background-color: orange; */
 }
 
 .rt-formula-editor-container .spliter {

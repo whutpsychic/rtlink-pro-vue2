@@ -1,4 +1,4 @@
-import{n as r}from"./index.f7ac9054.js";const t={data(){return{install:"npm i rtlink-pro-vue2 -s",code:`import Vue from 'vue';
+import{n as r}from"./index.787e5401.js";const t={data(){return{install:"npm i rtlink-pro-vue2 -s",code:`import Vue from 'vue';
 import RtlinkUIPro from 'rtlink-pro-vue2';
 import App from './App.vue';
 

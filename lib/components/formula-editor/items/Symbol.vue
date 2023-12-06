@@ -1,7 +1,7 @@
 <template>
-  <div :class="curr ? 'rt-formula-item-can current' : 'rt-formula-item-can'" @click="$emit('select')">
+  <div :class="curr ? 'rt-formula-item-can symbol-can current' : 'rt-formula-item-can symbol-can'" @click="$emit('select')">
     <p>{{ label }}</p>
-    <div>
+    <div class="icon-can">
       <i class="el-icon-circle-close" @click="onDelete"></i>
     </div>
   </div>

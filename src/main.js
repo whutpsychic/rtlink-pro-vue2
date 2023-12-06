@@ -18,7 +18,7 @@ import DemoBlock from "@/components/DemoBlock.vue"
 Vue.use(router);
 Vue.use(store);
 
-Vue.use(ElementUI, { size: 'small' });
+Vue.use(ElementUI);
 Vue.use(RtlinkUI);
 Vue.use(VueHighlightJS)
 
